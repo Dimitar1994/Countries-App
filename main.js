@@ -22,7 +22,16 @@ fetch(`${BASE_URL}/all`)//това ни взима цялата  информа�
 }) //така  ни се  дава нашия  списък със дани (масиви) */
 
 const api = function (path) {//това  ни звзима дани те  от API след  като го направим трябва да  го конзол логна  да  проверя дали работи 
-    return fetch(`${BASE_URL}/${path}`).then((response) => (response.json()));
+    
+    NProgress.start(); //така  си зареждаме  lodara  преди това  сме  си заредили script and css фаил
+
+    return fetch(`${BASE_URL}/${path}`)  //взима информациата от  сървара
+
+    .then((response) => response.json())
+    .catch(error =>console.log(error))//това  е за да  дава гршка  ако нещо от саита  не  зареди
+    .finally(() =>NProgress.done()) //така казваш стоп на  lodara много е  важно къде  ще го сложим инче  няма да  работи 
+
+
 }
 
 // api('region/europe')
@@ -31,7 +40,6 @@ const api = function (path) {//това  ни звзима дани те  от A
 const loadRegion = function (region) {
     api(`region/${region}`)
         .then((data) => {
-            console.log(data)
             renderCountries(data)
         })
 
@@ -40,24 +48,29 @@ const loadRegion = function (region) {
 loadRegion('europe')
 // get country clone
 
-// render countries
-
-const renderCountries = (countries) =>{
-    countries.forEach(country =>{
+const getCountryHtml = (country) => {
     const template = document.importNode(countryTemplate, true)//така  клонирам целиа div със  всички елементи във  него 
 
-        template.removeAttribute('id');//така премахвам id  на  клонираните  елементи 
-        template.classList.remove('d-none')//по този начин премахжаме  class от  клонираните  обекти 
+    template.removeAttribute('id');//така премахвам id  на  клонираните  елементи 
+    template.classList.remove('d-none')//по този начин премахжаме  class от  клонираните  обекти 
 
-        template.querySelector('.country-name').innerText = country.name.common ;//тези пропарти та  name and common ги взимам от главния  масив със  цялата информация  
-        template.querySelector('.country-capital').innerText = country.capital; // така си взимам столицата от главния масив
-        template.querySelector('.country-population').innerText = country.population.toLocaleString('bg-BG'); //това  прави цифрите  по стандарта  на  изписване  на  държавата 
-        template.querySelector('.country-region').innerText = country.region;
-        template.querySelector('.country-flag').setAttribute('src', country.flags.svg)  ; 
+    template.querySelector('.country-name').innerText = country.name.common;//тези пропарти та  name and common ги взимам от главния  масив със  цялата информация  
+    template.querySelector('.country-capital').innerText = country.capital; // така си взимам столицата от главния масив
+    template.querySelector('.country-population').innerText = country.population.toLocaleString('bg-BG'); //това  прави цифрите  по стандарта  на  изписване  на  държавата 
+    template.querySelector('.country-region').innerText = country.region;
+    template.querySelector('.country-flag').setAttribute('src', country.flags.svg);
 
+    return template;
+}
 
+// render countries
 
-        countriesList.appendChild(template) ;//така  вкарвам взетата информациа във  избраня  div във  html елемента 
+const renderCountries = (countries) => {
+    countriesList.innerHTML = ''
+    countries.forEach(country => {
+
+        const htmlTemlate = getCountryHtml(country)
+        countriesList.appendChild(htmlTemlate);//така  вкарвам взетата информациа във  избраня  div във  html елемента 
 
         // console.log(template)
 
@@ -68,6 +81,26 @@ const renderCountries = (countries) =>{
 
 // list switcher
 
+switchButtons.addEventListener('click', function (event) {
+
+    const buttonEl = event.target
+    const region = buttonEl.dataset.region
+    loadRegion(region)
+
+    switchButtons.querySelector('.active').classList.remove('active');//премахва класа  фактически и стила на дадениая  бутон 
+    buttonEl.classList.add('active') //слага  class  на  кликнати я  бутон
+
+
+})
+
+
+
+
+
 // load search results
 
 // search form
+searchForm.addEventListener('submit', (event) =>{
+    event.preventDefault()
+    
+})
