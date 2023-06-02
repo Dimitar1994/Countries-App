@@ -22,14 +22,14 @@ fetch(`${BASE_URL}/all`)//това ни взима цялата  информа�
 }) //така  ни се  дава нашия  списък със дани (масиви) */
 
 const api = function (path) {//това  ни звзима дани те  от API след  като го направим трябва да  го конзол логна  да  проверя дали работи 
-    
+
     NProgress.start(); //така  си зареждаме  lodara  преди това  сме  си заредили script and css фаил
 
     return fetch(`${BASE_URL}/${path}`)  //взима информациата от  сървара
 
-    .then((response) => response.json())
-    .catch(error =>console.log(error))//това  е за да  дава гршка  ако нещо от саита  не  зареди
-    .finally(() =>NProgress.done()) //така казваш стоп на  lodara много е  важно къде  ще го сложим инче  няма да  работи 
+        .then((response) => response.json())
+        .catch(error => console.log(error))//това  е за да  дава гршка  ако нещо от саита  не  зареди
+        .finally(() => NProgress.done()) //така казваш стоп на  lodara много е  важно къде  ще го сложим инче  няма да  работи 
 
 
 }
@@ -40,7 +40,7 @@ const api = function (path) {//това  ни звзима дани те  от A
 const loadRegion = function (region) {
     api(`region/${region}`)
         .then((data) => {
-            renderCountries(data)
+            renderCountries(data, countriesList)
         })
 
 }
@@ -65,12 +65,12 @@ const getCountryHtml = (country) => {
 
 // render countries
 
-const renderCountries = (countries) => {
-    countriesList.innerHTML = ''
+const renderCountries = (countries, toElement) => {
+    toElement.innerHTML = ''
     countries.forEach(country => {
 
         const htmlTemlate = getCountryHtml(country)
-        countriesList.appendChild(htmlTemlate);//така  вкарвам взетата информациа във  избраня  div във  html елемента 
+        toElement.appendChild(htmlTemlate);//така  вкарвам взетата информациа във  избраня  div във  html елемента 
 
         // console.log(template)
 
@@ -98,9 +98,16 @@ switchButtons.addEventListener('click', function (event) {
 
 
 // load search results
-
+const loadSearchList = (searchTerm) => {
+    api(`name/${searchTerm}`)
+        .then((data) => {
+          renderCountries(data, searchResultsList)
+        })
+}
 // search form
-searchForm.addEventListener('submit', (event) =>{
+searchForm.addEventListener('submit', (event) => {
     event.preventDefault()
-    
+    const inputValue = searchFormInput.value; //така  взимаме  информациата  която е  подадена  от  inputa
+    loadSearchList(inputValue)
+    //get input value
 })
