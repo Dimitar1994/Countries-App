@@ -1,5 +1,5 @@
 // constants
-const BASE_URL = 'https://restcountries.com/v3.1'; //всички базови дани се  намират  във  този адрес и се  взимат  от  там 
+const BASE_URL = 'https://restcountries.com/v3.1'; 
 
 // elements
 const countryTemplate = document.getElementById('country-template');
@@ -10,31 +10,22 @@ const searchResultsList = document.getElementById('search-result-list');
 const searchFormInput = searchForm.querySelector('input[name="country"]');
 
 // request api
-/*
-fetch(`${BASE_URL}/all`)//това ни взима цялата  информациа 
-.then(function(data){
-   // console.log(data)
-   return data.json()
-})
 
-.then(function(data){
-    console.log(data)
-}) //така  ни се  дава нашия  списък със дани (масиви) */
 
-const api = function (path) {//това  ни звзима дани те  от API след  като го направим трябва да  го конзол логна  да  проверя дали работи 
+const api = function (path) { 
 
-    NProgress.start(); //така  си зареждаме  lodara  преди това  сме  си заредили script and css фаил
+    NProgress.start(); 
 
-    return fetch(`${BASE_URL}/${path}`)  //взима информациата от  сървара
+    return fetch(`${BASE_URL}/${path}`)  
 
         .then((response) => response.json())
-        .catch(error => console.log(error))//това  е за да  дава гршка  ако нещо от саита  не  зареди
-        .finally(() => NProgress.done()) //така казваш стоп на  lodara много е  важно къде  ще го сложим инче  няма да  работи 
+        .catch(error => console.log(error))
+        .finally(() => NProgress.done()) 
 
 
 }
 
-// api('region/europe')
+
 
 //initial load
 const loadRegion = function (region) {
@@ -49,14 +40,13 @@ loadRegion('europe')
 // get country clone
 
 const getCountryHtml = (country) => {
-    const template = document.importNode(countryTemplate, true)//така  клонирам целиа div със  всички елементи във  него 
+    const template = document.importNode(countryTemplate, true) 
 
-    template.removeAttribute('id');//така премахвам id  на  клонираните  елементи 
-    template.classList.remove('d-none')//по този начин премахжаме  class от  клонираните  обекти 
-
-    template.querySelector('.country-name').innerText = country.name.common;//тези пропарти та  name and common ги взимам от главния  масив със  цялата информация  
-    template.querySelector('.country-capital').innerText = country.capital; // така си взимам столицата от главния масив
-    template.querySelector('.country-population').innerText = country.population.toLocaleString('bg-BG'); //това  прави цифрите  по стандарта  на  изписване  на  държавата 
+    template.removeAttribute('id');
+    template.classList.remove('d-none')
+    template.querySelector('.country-name').innerText = country.name.common; 
+    template.querySelector('.country-capital').innerText = country.capital; 
+    template.querySelector('.country-population').innerText = country.population.toLocaleString('bg-BG');  
     template.querySelector('.country-region').innerText = country.region;
     template.querySelector('.country-flag').setAttribute('src', country.flags.svg);
 
@@ -70,14 +60,13 @@ const renderCountries = (countries, toElement) => {
     countries.forEach(country => {
 
         const htmlTemlate = getCountryHtml(country)
-        toElement.appendChild(htmlTemlate);//така  вкарвам взетата информациа във  избраня  div във  html елемента 
+        toElement.appendChild(htmlTemlate); 
 
-        // console.log(template)
-
+       
     })
 }
 
-// load countries list
+
 
 // list switcher
 
@@ -87,8 +76,8 @@ switchButtons.addEventListener('click', function (event) {
     const region = buttonEl.dataset.region
     loadRegion(region)
 
-    switchButtons.querySelector('.active').classList.remove('active');//премахва класа  фактически и стила на дадениая  бутон 
-    buttonEl.classList.add('active') //слага  class  на  кликнати я  бутон
+    switchButtons.querySelector('.active').classList.remove('active');
+    buttonEl.classList.add('active') 
 
 
 })
@@ -107,7 +96,7 @@ const loadSearchList = (searchTerm) => {
 // search form
 searchForm.addEventListener('submit', (event) => {
     event.preventDefault()
-    const inputValue = searchFormInput.value; //така  взимаме  информациата  която е  подадена  от  inputa
+    const inputValue = searchFormInput.value; 
     loadSearchList(inputValue)
     //get input value
 })
